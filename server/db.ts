@@ -30,7 +30,9 @@ export interface DatabaseSchema {
   settings: BusinessSettings;
 }
 
-const DATA_DIR = path.resolve(process.cwd(), 'data');
+const DATA_DIR = process.env.VERCEL
+  ? '/tmp/data'
+  : path.resolve(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'distributor.json');
 
 const ALL_PERMISSIONS: Permission[] = [
@@ -781,8 +783,12 @@ class DatabaseService {
   }
 
   private ensureDataDirectory() {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+    try {
+      if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      }
+    } catch (e) {
+      // In serverless/read-only environments, this will be caught gracefully
     }
   }
 
@@ -796,7 +802,7 @@ class DatabaseService {
         }
       }
     } catch (e) {
-      console.error('[DB] Failed reading existing DB file, re-initializing seed data:', e);
+      console.warn('[DB] Using initial data:', e);
     }
     const initial = getInitialData();
     this.saveDataDirect(initial);
@@ -804,9 +810,14 @@ class DatabaseService {
   }
 
   private saveDataDirect(data: DatabaseSchema) {
-    const tmpFile = `${DB_FILE}.tmp.${Date.now()}`;
-    fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2), 'utf-8');
-    fs.renameSync(tmpFile, DB_FILE);
+    try {
+      this.ensureDataDirectory();
+      const tmpFile = `${DB_FILE}.tmp.${Date.now()}`;
+      fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2), 'utf-8');
+      fs.renameSync(tmpFile, DB_FILE);
+    } catch (e) {
+      // Running in read-only / serverless container
+    }
   }
 
   public save() {
