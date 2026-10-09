@@ -6,8 +6,9 @@ import { defineConfig, Plugin } from 'vite';
 import express from 'express';
 import { apiRouter } from './server/api.ts';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const dir = typeof import.meta.dirname !== 'undefined' 
+  ? import.meta.dirname 
+  : path.dirname(fileURLToPath(import.meta.url));
 
 const apiPlugin = (): Plugin => ({
   name: 'api-server-plugin',
@@ -24,7 +25,8 @@ export default defineConfig(() => {
     plugins: [react(), tailwindcss(), apiPlugin()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(dir, '.'),
+        '/src': path.resolve(dir, 'src'),
       },
     },
     server: {
