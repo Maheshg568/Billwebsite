@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/* Hide scrollbars globally across all browsers while retaining scroll functionality */
+html, body, *, *::before, *::after {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+}
+
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  header, aside, .print\:hidden {
+    display: none !important;
+  }
+
+  #printable-tax-invoice,
+  #printable-thermal-receipt {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}

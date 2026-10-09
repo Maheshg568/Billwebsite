@@ -1,0 +1,6 @@
+{
+  "name": "ApexDistribute ERP - Billing & Inventory Management",
+  "description": "Enterprise-grade distributor billing, inventory control, GST invoicing, and employee permission management system.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
